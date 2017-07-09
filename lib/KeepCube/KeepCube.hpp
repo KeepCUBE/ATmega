@@ -96,6 +96,7 @@ class KeepCube {
             digitalWrite(18, LOW);
             status.on();
 
+
             mesh.setNodeID(1); // TODO: tahat z konfigurace
 
             Serial.println(F("[INFO] Connecting to the mesh... "));
@@ -104,6 +105,8 @@ class KeepCube {
             Serial.println(mesh.getNodeID());
             radio.setPALevel(RF24_PA_HIGH); // hmm možná bude lepší to dát nazačátek, před setNodeID()
             Serial.println(F("[ OK ] Connected"));
+
+            radio.maskIRQ(1, 1, 0);
 
             Serial.println(F("--- KClib initialized ---"));
 
@@ -134,19 +137,19 @@ class KeepCube {
             mesh.update();
             updateLED();
 
-            // static long displayTimer;
-            //
-            // // Check mesh connection every 1 sec
-            // if (millis() - displayTimer > 1000) {
-            //     displayTimer = millis();
-            //     Serial.println(F("[MESH] Checking connection..."));
-            //     status.on();
-            //     if (!mesh.checkConnection()) {
-            //         Serial.println(F("[MESH] Renewing address..."));
-            //         mesh.renewAddress();
-            //     }
-            //     else status.off();
-            // }
+            static long displayTimer;
+
+            // Check mesh connection every 5 sec
+            if (millis() - displayTimer > 5000) {
+                displayTimer = millis();
+                // Serial.println(F("[MESH] Checking connection..."));
+                status.on();
+                if (!mesh.checkConnection()) {
+                    Serial.println(F("[MESH] Renewing address..."));
+                    mesh.renewAddress();
+                }
+                else status.off();
+            }
 
         }
 
@@ -216,7 +219,7 @@ class KeepCube {
             } else if (time < 160) {
                 time = 1;
             } else {
-                // sem prijde neco na upravu toho delaye, zatim se na to sere
+                // TODO: sem prijde neco na upravu toho delaye, zatim se na to sere
                 // time /= 1.075; // bere se v potaz pomalost atmegy
                 // time -= 155;
             }

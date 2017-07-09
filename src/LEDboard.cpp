@@ -37,8 +37,6 @@ void setup() {
     Serial.begin(250000);
     cube.init();
     attachInterrupt(digitalPinToInterrupt(IRQpin), [] () { cube.interruptHandler(); }, FALLING);
-    Serial.println(KeepCube::newNodeID);
-    Serial.println(sizeof(uint8_t));
 }
 
 
